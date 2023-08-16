@@ -25,14 +25,14 @@ public class ContasController {
     //requisições
     //GET - Pegar as informações do nosso banco
     @GetMapping
-    public ResponseEntity<List<ContasModel>> listarTodasContas(){
+    public ResponseEntity<List<ContasModel>> listarTodasContas() {
         return ResponseEntity.ok(contasService.listarContas());
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<?> exibeUmaContaPeloId(@PathVariable Long id){
+    public ResponseEntity<?> exibeUmaContaPeloId(@PathVariable Long id) {
         Optional<ContasModel> contaOpcional = contasService.exibeContaPorId(id);
-        if (contaOpcional.isEmpty()){
+        if (contaOpcional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Conta não encontrada, tente novamente!");
         }
         return ResponseEntity.ok(contaOpcional.get());
@@ -40,20 +40,20 @@ public class ContasController {
 
     //POST - Cria uma nova conta dentro do banco
     @PostMapping
-    public ResponseEntity<ContasModel> cadastrarConta(@RequestBody ContasModel contasModel, ContaFactory contaFactory){
+    public ResponseEntity<ContasModel> cadastrarConta(@RequestBody ContasModel contasModel, ContaFactory contaFactory) {
         ContasModel novaConta = contasService.cadastrar(contasModel, contaFactory);
         return new ResponseEntity<>(novaConta, HttpStatus.CREATED);
     }
 
     //PUT - Alterar uma conta já existente dentro do banco
     @PutMapping(path = "/{id}")
-    public ContasModel atualizarConta(@PathVariable Long id, @RequestBody ContasModel contasModel){
+    public ContasModel atualizarConta(@PathVariable Long id, @RequestBody ContasModel contasModel) {
         return contasService.alterar(id, contasModel);
     }
 
     //DELETE - Deleta uma conta já existente dentro do banco
     @DeleteMapping(path = "/{id}")
-    public void deletarConta(@PathVariable Long id){
+    public void deletarConta(@PathVariable Long id) {
         contasService.deletarConta(id);
     }
 

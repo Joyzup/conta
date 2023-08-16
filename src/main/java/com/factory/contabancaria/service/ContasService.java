@@ -16,15 +16,15 @@ public class ContasService {
     ContasRepository contasRepository;
 
     //métodos
-    public List<ContasModel> listarContas(){
+    public List<ContasModel> listarContas() {
         return contasRepository.findAll();
     }
 
-    public Optional<ContasModel> exibeContaPorId(Long id){
+    public Optional<ContasModel> exibeContaPorId(Long id) {
         return contasRepository.findById(id);
     }
 
-    public ContasModel cadastrar(ContasModel contasModel, ContaFactory contaFactory){
+    public ContasModel cadastrar(ContasModel contasModel, ContaFactory contaFactory) {
         BigDecimal resultado = contaFactory.tipoServicoConta(contasModel.getTipoServico())
                 .calcular(contasModel.getValorAtualConta(), contasModel.getValorFornecido());
         contasModel.setValorFinal(resultado);
@@ -45,7 +45,7 @@ public class ContasService {
         return contasRepository.save(conta);
     }
 
-    public void deletarConta(Long id){
+    public void deletarConta(Long id) {
         contasRepository.deleteById(id);
     }
 
