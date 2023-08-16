@@ -29,7 +29,7 @@ public class ContasController {
         return ResponseEntity.ok(contasService.listarContas());
     }
 
-    @GetMapping(path = "/{id}")
+    @GetMapping(path = "/{id}")///TODO ocultar o tipo de serviço, valorFornecido e valor final ao exibir conta
     public ResponseEntity<?> exibeUmaContaPeloId(@PathVariable Long id) {
         Optional<ContasModel> contaOpcional = contasService.exibeContaPorId(id);
         if (contaOpcional.isEmpty()) {
@@ -39,14 +39,14 @@ public class ContasController {
     }
 
     //POST - Cria uma nova conta dentro do banco
-    @PostMapping
+    @PostMapping ///TODO o programa deveria já começar com operação de saque ou depósito?
     public ResponseEntity<ContasModel> cadastrarConta(@RequestBody ContasModel contasModel, ContaFactory contaFactory) {
         ContasModel novaConta = contasService.cadastrar(contasModel, contaFactory);
         return new ResponseEntity<>(novaConta, HttpStatus.CREATED);
     }
 
     //PUT - Alterar uma conta já existente dentro do banco
-    @PutMapping(path = "/{id}")
+    @PutMapping(path = "/{id}")///TODO mesmo colocando saque o app não atualiza os valores
     public ContasModel atualizarConta(@PathVariable Long id, @RequestBody ContasModel contasModel) {
         return contasService.alterar(id, contasModel);
     }
