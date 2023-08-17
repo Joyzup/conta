@@ -9,7 +9,7 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "TB_CONTAS")
+@Table(name = "num")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -28,10 +28,9 @@ public class ContasModel {
     private String nomeDoUsuario;
     @Column(nullable = false)
     private BigDecimal valorAtualConta;
-    @Column(nullable = false)
-    private BigDecimal ValorFornecido;
     @Column(length = 20, nullable = false)
     private String tipoServico;
+    @Column(nullable = false)
+    private BigDecimal ValorFornecido;
     private BigDecimal valorFinal;
-
 }
