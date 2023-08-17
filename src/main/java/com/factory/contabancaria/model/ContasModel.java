@@ -20,18 +20,20 @@ public class ContasModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(length = 6, nullable = false)
-    private String numConta;
-    @Column(length = 4, nullable = false)
+    @Column(length = 15)
+    private String numero_conta;
+    @Column(length = 6)
     private String agencia;
     @Column(nullable = false)
-    private String nomeDoUsuario;
+    private String nomeCliente;
     @Column(nullable = false)
-    private BigDecimal valorAtualConta;
+    private BigDecimal valor_atual_conta;
     @Column(nullable = false)
-    private BigDecimal ValorFornecido;
+    private BigDecimal valor_fornecido;
     @Column(length = 20, nullable = false)
-    private String tipoServico;
-    private BigDecimal valorFinal;
+    private String tipo_servico;
+
+//Não vi utilidade para essa coluna valor_final
+//    private BigDecimal valor_final;
 
 }
