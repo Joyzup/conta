@@ -2,6 +2,7 @@ package com.factory.contabancaria.controller;
 
 import com.factory.contabancaria.model.ContasModel;
 import com.factory.contabancaria.model.dto.ContaAssembler;
+import com.factory.contabancaria.model.dto.ContaGetDto;
 import com.factory.contabancaria.model.dto.ContaPostDto;
 import com.factory.contabancaria.model.factory.ContaFactory;
 import com.factory.contabancaria.repository.ContasRepository;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,17 +31,37 @@ public class ContasController {
     //requisições
     //GET - Pegar as informações do nosso banco
     @GetMapping
-    public ResponseEntity<List<ContasModel>> listarTodasContas(){
-        return ResponseEntity.ok(contasService.listarContas());
+    public ResponseEntity<List<ContaGetDto>> listarTodasContas(){
+
+        List<ContasModel> contas = contasService.listarContas();
+
+        List<ContaGetDto> contasDto = new ArrayList<>();
+        for (ContasModel conta : contas) {
+
+            ContaGetDto contaGetDto = contaAssembler.toModelGet(conta);
+            contasDto.add(contaGetDto);
+
+        }
+
+        return ResponseEntity.ok(contasDto);
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<?> exibeUmaContaPeloId(@PathVariable Long id){
+    public ResponseEntity<?> exibeUmaContaPeloId(@PathVariable Long id) {
         Optional<ContasModel> contaOpcional = contasService.exibeContaPorId(id);
-        if (contaOpcional.isEmpty()){
+
+        if (contaOpcional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Conta não encontrada, tente novamente!");
         }
-        return ResponseEntity.ok(contaOpcional.get());
+
+        ContaPostDto novaContaDto = null;
+
+        if (contaOpcional.isPresent()) {
+            ContasModel conta = contaOpcional.get();
+            novaContaDto = contaAssembler.toModelPost(conta);
+        }
+
+        return ResponseEntity.ok(novaContaDto);
     }
 
     //POST - Cria uma nova conta dentro do banco
@@ -48,7 +70,7 @@ public class ContasController {
                                                        ContaFactory contaFactory){
         ContasModel novaConta = contasService.cadastrar(contasModel, contaFactory);
 
-        ContaPostDto novaContaDto = contaAssembler.toModel(contasModel);
+        ContaPostDto novaContaDto = contaAssembler.toModelPost(contasModel);
 
         return new ResponseEntity<>(novaContaDto, HttpStatus.CREATED);
     }
