@@ -97,7 +97,7 @@ public class ContasController {
     return contasService.alterar(id, contasModel);
   }
 
-  // PUT - Realizar um saque ou deposíto
+  // PUT - Altera o nome do usuário
   @PutMapping(path = "/servico/{id}")
   public ContasModel atualizaUsuario(@PathVariable Long id, @RequestBody ContasModel contasModel,
                                      ContaFactory contaFactory) {
