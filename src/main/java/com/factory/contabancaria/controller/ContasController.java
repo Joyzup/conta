@@ -1,6 +1,8 @@
 package com.factory.contabancaria.controller;
 
 import com.factory.contabancaria.model.ContasModel;
+import com.factory.contabancaria.model.dto.ContaAssembler;
+import com.factory.contabancaria.model.dto.ContaPostDto;
 import com.factory.contabancaria.model.factory.ContaFactory;
 import com.factory.contabancaria.repository.ContasRepository;
 import com.factory.contabancaria.service.ContasService;
@@ -18,6 +20,8 @@ public class ContasController {
 
     @Autowired
     ContasService contasService;
+    @Autowired
+    ContaAssembler contaAssembler;
 
     @Autowired
     ContasRepository contasRepository;
@@ -40,9 +44,13 @@ public class ContasController {
 
     //POST - Cria uma nova conta dentro do banco
     @PostMapping
-    public ResponseEntity<ContasModel> cadastrarConta(@RequestBody ContasModel contasModel, ContaFactory contaFactory){
+    public ResponseEntity<ContaPostDto> cadastrarConta(@RequestBody ContasModel contasModel,
+                                                       ContaFactory contaFactory){
         ContasModel novaConta = contasService.cadastrar(contasModel, contaFactory);
-        return new ResponseEntity<>(novaConta, HttpStatus.CREATED);
+
+        ContaPostDto novaContaDto = contaAssembler.toModel(contasModel);
+
+        return new ResponseEntity<>(novaContaDto, HttpStatus.CREATED);
     }
 
     //PUT - Alterar uma conta já existente dentro do banco
