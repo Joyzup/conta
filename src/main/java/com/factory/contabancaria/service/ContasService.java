@@ -49,4 +49,8 @@ public class ContasService {
         contasRepository.deleteById(id);
     }
 
+
+    public ContasModel nomeDoUsuario(String nome) {
+        return contasRepository.findByNomeDoUsuario(nome);
+    }
 }
