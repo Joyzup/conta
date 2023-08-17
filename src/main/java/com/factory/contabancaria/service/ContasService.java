@@ -1,6 +1,7 @@
 package com.factory.contabancaria.service;
 
 import com.factory.contabancaria.model.ContasModel;
+import com.factory.contabancaria.model.dto.ContaPutDadosDTO;
 import com.factory.contabancaria.model.factory.ContaFactory;
 import com.factory.contabancaria.repository.ContasRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,15 +32,18 @@ public class ContasService {
         return contasRepository.save(contasModel);
     }
 
-    public ContasModel alterar(Long id, ContasModel contasModel) {
+    public ContasModel alterar(Long id, ContaPutDadosDTO contaPutDadosDTO, ContaFactory contaFactory) {
 
         ContasModel conta = exibeContaPorId(id).get();
 
-        if (contasModel.getNumConta() != null) {
-            conta.setNumConta(contasModel.getNumConta());
+        if (contaPutDadosDTO.getNumConta() != null) {
+            conta.setNumConta(contaPutDadosDTO.getNumConta());
         }
-        if (contasModel.getAgencia() != null) {
-            conta.setAgencia(contasModel.getAgencia());
+        if (contaPutDadosDTO.getAgencia() != null) {
+            conta.setAgencia(contaPutDadosDTO.getAgencia());
+        }
+        if (contaPutDadosDTO.getNomeDoUsuario() != null) {
+            conta.setNomeDoUsuario(contaPutDadosDTO.getNomeDoUsuario());
         }
 
         return contasRepository.save(conta);
