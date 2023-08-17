@@ -1,5 +1,8 @@
 package com.factory.contabancaria.model.factory;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class ContaFactory {
 
     public CalculoConta tipoServicoConta(String tipoServico) {
