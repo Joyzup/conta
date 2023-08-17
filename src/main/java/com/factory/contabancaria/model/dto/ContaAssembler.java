@@ -24,10 +24,5 @@ public class ContaAssembler {
 
     }
 
-    public Optional<ContaGetDto> toModelGetOptional(ContasModel contasModel) {
-
-        return Optional.ofNullable(modelMapper.map(contasModel, ContaGetDto.class));
-
-    }
 
 }

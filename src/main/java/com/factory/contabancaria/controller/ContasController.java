@@ -106,4 +106,21 @@ public class ContasController {
         contasService.deletarConta(id);
     }
 
-}
+    @PutMapping(path = "/alterar-valor-final/{id}")
+    public ResponseEntity<ContasModel> alterarValorFinal(@PathVariable Long id,
+                                                         @RequestBody ContasModel contasModel) {
+
+        ContasModel conta = contasService.alterarValorFinal(id, contasModel);
+        if (conta == null) {
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+
+        } else {
+
+            return ResponseEntity.ok(conta);
+
+        }
+
+    }
+
+    }

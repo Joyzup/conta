@@ -3,6 +3,7 @@ package com.factory.contabancaria.service;
 import com.factory.contabancaria.model.ContasModel;
 import com.factory.contabancaria.model.factory.ContaFactory;
 import com.factory.contabancaria.repository.ContasRepository;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,6 +45,16 @@ public class ContasService {
         }
 
         return contasRepository.save(conta);
+    }
+
+    public ContasModel alterarValorFinal(Long id, ContasModel contasModel) {
+
+        ContasModel conta = exibeContaPorId(id).get();
+
+        conta.setValorFinal(contasModel.getValorFinal());
+
+        return contasRepository.save(conta);
+
     }
 
     public void deletarConta(Long id){
