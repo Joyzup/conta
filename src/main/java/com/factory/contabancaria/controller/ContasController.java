@@ -64,6 +64,25 @@ public class ContasController {
         return ResponseEntity.ok(novaContaDto);
     }
 
+
+    @GetMapping(path = "/buscar-por-nome")
+    public ResponseEntity<?> exibeUmaContaPeloNome(String nome) {
+        ContasModel contaModel = contasService.nomeDoUsuario(nome);
+
+        if (contaModel.getNomeDoUsuario().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Conta não encontrada, tente novamente!");
+        }
+
+        ContaPostDto novaContaDto = null;
+
+        if (contaModel.getNomeDoUsuario().equals(nome)) {
+
+            novaContaDto = contaAssembler.toModelPost(contaModel);
+        }
+
+        return ResponseEntity.ok(novaContaDto);
+    }
+
     //POST - Cria uma nova conta dentro do banco
     @PostMapping
     public ResponseEntity<ContaPostDto> cadastrarConta(@RequestBody ContasModel contasModel,
