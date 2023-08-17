@@ -1,15 +1,15 @@
 package com.factory.contabancaria.model.factory;
 
+import com.factory.contabancaria.enums.TipoDeServico;
+
 public class ContaFactory {
 
-    public CalculoConta tipoServicoConta(String tipoServico){
-        if (tipoServico.equalsIgnoreCase("deposito")){
-            return new CalculoDeposito();
-        } else if (tipoServico.equalsIgnoreCase("saque")) {
-            return new CalculoSaque();
-        }else {
-            return null;
-        }
+    public CalculoConta tipoServicoConta(TipoDeServico tipoServico){
+
+        if (tipoServico == TipoDeServico.DEPOSITO) return new CalculoDeposito();
+        else if (tipoServico == TipoDeServico.SAQUE) return new CalculoSaque();
+        else return null;
+
     }
 
 }

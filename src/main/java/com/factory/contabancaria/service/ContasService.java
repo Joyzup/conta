@@ -1,5 +1,6 @@
 package com.factory.contabancaria.service;
 
+import com.factory.contabancaria.enums.TipoDeServico;
 import com.factory.contabancaria.model.ContasModel;
 import com.factory.contabancaria.model.factory.ContaFactory;
 import com.factory.contabancaria.repository.ContasRepository;
@@ -24,10 +25,14 @@ public class ContasService {
         return contasRepository.findById(id);
     }
 
+    public ContasModel findByNomeDoUsuario(String nomeUsuario) {
+        return contasRepository.findByNomeDoUsuario(nomeUsuario);
+    }
+
     public ContasModel cadastrar(ContasModel contasModel, ContaFactory contaFactory){
-        BigDecimal resultado = contaFactory.tipoServicoConta(contasModel.getTipoServico())
+        BigDecimal resultado = contaFactory.tipoServicoConta(TipoDeServico.valueOf(contasModel.getTipoServico()))
                 .calcular(contasModel.getValorAtualConta(), contasModel.getValorFornecido());
-        contasModel.setValorFinal(resultado);
+        contasModel.setValorAtualConta(resultado);
         return contasRepository.save(contasModel);
     }
 
@@ -41,6 +46,16 @@ public class ContasService {
         if (contasModel.getAgencia() != null) {
             conta.setAgencia(contasModel.getAgencia());
         }
+        if (contasModel.getNomeDoUsuario() != null) {
+            conta.setNomeDoUsuario(contasModel.getNomeDoUsuario());
+        }
+        if (contasModel.getValorAtualConta()!=null){
+            if (contasModel.getTipoServico().equalsIgnoreCase("DEPOSITO")) conta.setValorAtualConta(contasModel.getValorAtualConta().add(contasModel.getValorFornecido()));
+            else conta.setValorAtualConta(contasModel.getValorAtualConta().subtract(contasModel.getValorFornecido()));
+        }
+        if (contasModel.getTipoServico().equalsIgnoreCase("DEPOSITO")) {
+            conta.setTipoServico(String.valueOf(TipoDeServico.DEPOSITO));
+        } else conta.setTipoServico(String.valueOf(TipoDeServico.SAQUE));
 
         return contasRepository.save(conta);
     }
