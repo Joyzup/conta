@@ -1,5 +1,9 @@
 package com.factory.contabancaria.controller;
 
+import com.factory.contabancaria.dto.GetDTO;
+import com.factory.contabancaria.dto.PostDTO;
+import com.factory.contabancaria.mapper.GetMapper;
+import com.factory.contabancaria.mapper.PostMapper;
 import com.factory.contabancaria.model.ContasModel;
 import com.factory.contabancaria.model.factory.ContaFactory;
 import com.factory.contabancaria.repository.ContasRepository;
@@ -9,8 +13,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/contas")
@@ -22,33 +28,48 @@ public class ContasController {
     @Autowired
     ContasRepository contasRepository;
 
+    @Autowired
+    GetMapper getMapper;
+
+    @Autowired
+    PostMapper postMapper;
+
+
     //requisições
     //GET - Pegar as informações do nosso banco
     @GetMapping
-    public ResponseEntity<List<ContasModel>> listarTodasContas() {
-        return ResponseEntity.ok(contasService.listarContas());
+    public ResponseEntity<List<GetDTO>> listarTodasContas() {
+        List<ContasModel> contas = contasService.listarContas();
+
+        List<GetDTO> dtos = contas.stream()
+                .map(conta -> getMapper.getDTO(conta))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
     }
 
-    @GetMapping(path = "/{id}")///TODO ocultar o tipo de serviço, valorFornecido e valor final ao exibir conta
+    @GetMapping(path = "/{id}")
     public ResponseEntity<?> exibeUmaContaPeloId(@PathVariable Long id) {
         Optional<ContasModel> contaOpcional = contasService.exibeContaPorId(id);
+
         if (contaOpcional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Conta não encontrada, tente novamente!");
         }
-        return ResponseEntity.ok(contaOpcional.get());
+        ContasModel contaId = contaOpcional.get();
+        return ResponseEntity.ok(getMapper.getDTO(contaId));
     }
 
     //POST - Cria uma nova conta dentro do banco
-    @PostMapping ///TODO o programa deveria já começar com operação de saque ou depósito?
+    @PostMapping
     public ResponseEntity<ContasModel> cadastrarConta(@RequestBody ContasModel contasModel, ContaFactory contaFactory) {
         ContasModel novaConta = contasService.cadastrar(contasModel, contaFactory);
         return new ResponseEntity<>(novaConta, HttpStatus.CREATED);
     }
 
     //PUT - Alterar uma conta já existente dentro do banco
-    @PutMapping(path = "/{id}")///TODO mesmo colocando saque o app não atualiza os valores
-    public ContasModel atualizarConta(@PathVariable Long id, @RequestBody ContasModel contasModel) {
-        return contasService.alterar(id, contasModel);
+    @PutMapping
+    public PostDTO atualizarConta(@RequestBody ContasModel contasModel) {
+        ContasModel movimentaConta = contasService.alterar(contasModel);
+        return new ResponseEntity<>(postMapper.postDTO(movimentaConta),HttpStatus.CREATED).getBody();
     }
 
     //DELETE - Deleta uma conta já existente dentro do banco
