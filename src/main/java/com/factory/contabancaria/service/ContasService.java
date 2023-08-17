@@ -2,6 +2,7 @@ package com.factory.contabancaria.service;
 
 import com.factory.contabancaria.model.ContasModel;
 import com.factory.contabancaria.model.dto.ContaPutDadosDTO;
+import com.factory.contabancaria.model.dto.ContaPutServiceDTO;
 import com.factory.contabancaria.model.factory.ContaFactory;
 import com.factory.contabancaria.repository.ContasRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,18 @@ public class ContasService {
         if (contaPutDadosDTO.getNomeDoUsuario() != null) {
             conta.setNomeDoUsuario(contaPutDadosDTO.getNomeDoUsuario());
         }
+
+        return contasRepository.save(conta);
+    }
+
+    public ContasModel alterarServico(Long id, ContaPutServiceDTO contaPutServiceDTO, ContaFactory contaFactory) {
+        ContasModel conta = exibeContaPorId(id).get();
+
+        BigDecimal resultado = contaFactory.tipoServicoConta(contaPutServiceDTO.getTipoServico()).calcular(conta.getValorAtualConta(), contaPutServiceDTO.getValorFornecido());
+        conta.setValorFornecido(contaPutServiceDTO.getValorFornecido());
+        conta.setValorFinal(contaPutServiceDTO.getValorFornecido());
+        conta.setTipoServico(contaPutServiceDTO.getTipoServico());
+        conta.setValorAtualConta(conta.getValorAtualConta());
 
         return contasRepository.save(conta);
     }

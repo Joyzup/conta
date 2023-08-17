@@ -1,6 +1,8 @@
 package com.factory.contabancaria.controller;
 
 import com.factory.contabancaria.model.ContasModel;
+import com.factory.contabancaria.model.dto.ContaDTO;
+import com.factory.contabancaria.model.dto.ContaPutDadosDTO;
 import com.factory.contabancaria.model.factory.ContaFactory;
 import com.factory.contabancaria.repository.ContasRepository;
 import com.factory.contabancaria.service.ContasService;
@@ -47,9 +49,20 @@ public class ContasController {
 
     //PUT - Alterar uma conta já existente dentro do banco
     @PutMapping(path = "/{id}")
-    public ContasModel atualizarConta(@PathVariable Long id, @RequestBody ContasModel contasModel){
-        return contasService.alterar(id, contasModel);
+    public ResponseEntity<?> atualizarConta(@PathVariable Long id, @RequestBody ContaPutDadosDTO contaPutDadosDTO, ContaFactory contaFactory) {
+        ContasModel contasModel = contasService.alterar(id, contaPutDadosDTO, contaFactory);
+
+        ContaDTO contaDTO = new ContaDTO();
+        contaDTO.setNumConta(contasModel.getNumConta());
+        contaDTO.setAgencia(contasModel.getAgencia());
+        contaDTO.setNomeDoUsuario(contasModel.getNomeDoUsuario());
+        contaDTO.setValorAtualConta(contasModel.getValorFinal());
+        contaDTO.setTipoServico(contasModel.getTipoServico());
+        contaDTO.setValorFornecido(contasModel.getValorFornecido());
+
+        return ResponseEntity.ok(contaDTO);
     }
+
 
     //DELETE - Deleta uma conta já existente dentro do banco
     @DeleteMapping(path = "/{id}")
