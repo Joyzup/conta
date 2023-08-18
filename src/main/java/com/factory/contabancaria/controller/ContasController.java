@@ -1,5 +1,7 @@
 package com.factory.contabancaria.controller;
 
+import com.factory.contabancaria.dto.ContaGetDto;
+import com.factory.contabancaria.dto.ContaPostDto;
 import com.factory.contabancaria.model.ContasModel;
 import com.factory.contabancaria.model.factory.ContaFactory;
 import com.factory.contabancaria.repository.ContasRepository;
@@ -25,35 +27,65 @@ public class ContasController {
     //requisições
     //GET - Pegar as informações do nosso banco
     @GetMapping
-    public ResponseEntity<List<ContasModel>> listarTodasContas(){
+    public ResponseEntity<List<ContasModel>> listarTodasContas() {
         return ResponseEntity.ok(contasService.listarContas());
     }
 
-    @GetMapping(path = "/{id}")
-    public ResponseEntity<?> exibeUmaContaPeloId(@PathVariable Long id){
+    @GetMapping(path = "/id/{id}")
+    public ResponseEntity<?> exibeUmaContaPeloId(@PathVariable Long id) {
         Optional<ContasModel> contaOpcional = contasService.exibeContaPorId(id);
-        if (contaOpcional.isEmpty()){
+        if (contaOpcional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Conta não encontrada, tente novamente!");
         }
         return ResponseEntity.ok(contaOpcional.get());
     }
 
+    @GetMapping(path = "/nome/{nomeDoUsuario}")
+    public ResponseEntity<?> exibeUmaContaPeloNomeUsuario(@PathVariable String nomeDoUsuario) {
+        Optional<ContasModel> contaOpcional = Optional.ofNullable(contasService.exibeContaPorNomeDoUsuario(nomeDoUsuario));
+        if (contaOpcional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        ContasModel conta = contaOpcional.get();
+        ContaGetDto responseDTO = new ContaGetDto();
+        responseDTO.setNumConta(conta.getNumConta());
+        responseDTO.setAgencia(conta.getAgencia());
+        responseDTO.setNomeDoUsuario(conta.getNomeDoUsuario());
+        responseDTO.setValorAtualConta(conta.getValorAtualConta());
+
+        return ResponseEntity.ok(responseDTO);
+    }
+
     //POST - Cria uma nova conta dentro do banco
     @PostMapping
-    public ResponseEntity<ContasModel> cadastrarConta(@RequestBody ContasModel contasModel, ContaFactory contaFactory){
+    public ResponseEntity<ContaPostDto> cadastrarConta(@RequestBody ContasModel contasModel, ContaFactory contaFactory) {
         ContasModel novaConta = contasService.cadastrar(contasModel, contaFactory);
-        return new ResponseEntity<>(novaConta, HttpStatus.CREATED);
+
+        ContaPostDto responseDTO = new ContaPostDto();
+        responseDTO.setNomeDoUsuario(novaConta.getNomeDoUsuario());
+        responseDTO.setValorAtualConta(novaConta.getValorAtualConta()); // Alterado para valorAtualConta
+
+        return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
     }
+
 
     //PUT - Alterar uma conta já existente dentro do banco
     @PutMapping(path = "/{id}")
-    public ContasModel atualizarConta(@PathVariable Long id, @RequestBody ContasModel contasModel){
+    public ContasModel atualizarConta(@PathVariable Long id, @RequestBody ContasModel contasModel) {
         return contasService.alterar(id, contasModel);
     }
 
+    @PutMapping(path = "/{id}/nome")
+    public ResponseEntity<ContasModel> atualizarContaNome(@PathVariable Long id, @RequestBody String novoNome) {
+        ContasModel contaAtualizada = contasService.atualizarContaNome(id, novoNome);
+        return ResponseEntity.ok(contaAtualizada);
+    }
+
+
     //DELETE - Deleta uma conta já existente dentro do banco
     @DeleteMapping(path = "/{id}")
-    public void deletarConta(@PathVariable Long id){
+    public void deletarConta(@PathVariable Long id) {
         contasService.deletarConta(id);
     }
 

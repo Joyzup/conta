@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ContasRepository extends JpaRepository<ContasModel, Long> {
+    ContasModel findByNomeDoUsuario(String nomeDoUsuario);
 }

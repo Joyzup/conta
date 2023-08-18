@@ -29,7 +29,7 @@ public class ContasModel {
     @Column(nullable = false)
     private BigDecimal valorAtualConta;
     @Column(nullable = false)
-    private BigDecimal ValorFornecido;
+    private BigDecimal valorFornecido;
     @Column(length = 20, nullable = false)
     private String tipoServico;
     private BigDecimal valorFinal;
