@@ -1,5 +1,7 @@
 package com.factory.contabancaria.controller;
 
+import com.factory.contabancaria.dto.CriarContaDTO;
+import com.factory.contabancaria.dto.ListarContaDTO;
 import com.factory.contabancaria.model.ContasModel;
 import com.factory.contabancaria.model.factory.ContaFactory;
 import com.factory.contabancaria.repository.ContasRepository;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/contas")
@@ -22,15 +25,37 @@ public class ContasController {
     @Autowired
     ContasRepository contasRepository;
 
-    //requisições
-    //GET - Pegar as informações do nosso banco
+
     @GetMapping
-    public ResponseEntity<List<ContasModel>> listarTodasContas(){
-        return ResponseEntity.ok(contasService.listarContas());
+    public ResponseEntity<List<ListarContaDTO>> listarTodasContas() {
+        List<ListarContaDTO> contaDTOS = contasService.listarContas();
+        return ResponseEntity.ok(contaDTOS);
+    }
+
+
+
+    private ListarContaDTO mapToDTO(ContasModel conta) {
+        ListarContaDTO dto = new ListarContaDTO();
+        dto.setNumConta(conta.getNumConta());
+        dto.setAgencia(conta.getAgencia());
+        dto.setNomeDoUsuario(conta.getNomeDoUsuario());
+        dto.setValorAtualConta(conta.getValorAtualConta());
+        return dto;
+    }
+//No postman usar o form-data para essa requisição
+    @GetMapping(value = "buscarPorNome")
+    public ResponseEntity<List<ListarContaDTO>> listarContasPorNomeUsuario(@RequestParam (name = "nomeDoUsuario") String nomeDoUsuario) {
+        List<ContasModel> contas = contasService.listarContasPorNomeDeUsuario(nomeDoUsuario);
+
+        List<ListarContaDTO> dtos = contas.stream()
+                .map(conta -> mapToDTO(conta))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(dtos);
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<?> exibeUmaContaPeloId(@PathVariable Long id){
+    public ResponseEntity<Object> exibeUmaContaPeloId(@PathVariable(value = "id")Long id){
         Optional<ContasModel> contaOpcional = contasService.exibeContaPorId(id);
         if (contaOpcional.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Conta não encontrada, tente novamente!");
@@ -38,22 +63,26 @@ public class ContasController {
         return ResponseEntity.ok(contaOpcional.get());
     }
 
-    //POST - Cria uma nova conta dentro do banco
+    //    POST - Cria uma nova conta dentro do banco
     @PostMapping
-    public ResponseEntity<ContasModel> cadastrarConta(@RequestBody ContasModel contasModel, ContaFactory contaFactory){
-        ContasModel novaConta = contasService.cadastrar(contasModel, contaFactory);
+    public ResponseEntity<CriarContaDTO> cadastrarConta(@RequestBody CriarContaDTO criarContaDTO) {
+        CriarContaDTO novaConta = contasService.cadastrar(criarContaDTO);
         return new ResponseEntity<>(novaConta, HttpStatus.CREATED);
     }
 
-    //PUT - Alterar uma conta já existente dentro do banco
+
+
+
+   // PUT - Alterar uma conta já existente dentro do banco
     @PutMapping(path = "/{id}")
-    public ContasModel atualizarConta(@PathVariable Long id, @RequestBody ContasModel contasModel){
-        return contasService.alterar(id, contasModel);
+    public ContasModel atualizarConta(@PathVariable Long id, @RequestBody ContasModel contasModel ,
+                                      ContaFactory contaFactory){
+        return contasService.alterar(id, contasModel,contaFactory);
     }
 
     //DELETE - Deleta uma conta já existente dentro do banco
     @DeleteMapping(path = "/{id}")
-    public void deletarConta(@PathVariable Long id){
+    public void deletarConta(@PathVariable Long id) {
         contasService.deletarConta(id);
     }
 
