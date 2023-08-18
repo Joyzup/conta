@@ -41,9 +41,14 @@ public class ContasController {
 
     //POST - Cria uma nova conta dentro do banco
     @PostMapping
-    public ResponseEntity<ContasModel> cadastrarConta(@RequestBody ContasModel contasModel, ContaFactory contaFactory){
+    public ResponseEntity<?> cadastrarConta(@RequestBody ContasModel contasModel, ContaFactory contaFactory){
         ContasModel novaConta = contasService.cadastrar(contasModel, contaFactory);
-        return new ResponseEntity<>(novaConta, HttpStatus.CREATED);
+        ContasDTO contasDTO = new ContasDTO();
+        contasDTO.setNomeDoUsuario(novaConta.getNomeDoUsuario());
+        contasDTO.setValorAtualConta(novaConta.getValorAtualConta());
+        contasDTO.setValorFornecido(novaConta.getValorFornecido());
+        contasDTO.setTipoServico(novaConta.getTipoServico());
+        return new ResponseEntity<>(contasDTO, HttpStatus.CREATED);
     }
 
     //PUT - Alterar uma conta já existente dentro do banco
