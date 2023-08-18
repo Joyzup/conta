@@ -27,7 +27,7 @@ public class ContasService {
     public ContasModel cadastrar(ContasModel contasModel, ContaFactory contaFactory){
         BigDecimal resultado = contaFactory.tipoServicoConta(contasModel.getTipoServico())
                 .calcular(contasModel.getValorAtualConta(), contasModel.getValorFornecido());
-        contasModel.setValorFinal(resultado);
+        contasModel.setValorAtualConta(resultado);
         return contasRepository.save(contasModel);
     }
 

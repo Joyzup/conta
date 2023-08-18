@@ -6,7 +6,6 @@ public class CalculoDeposito implements CalculoConta{
     @Override
     public BigDecimal calcular(BigDecimal valorAtualConta, BigDecimal valorFornecido){
         BigDecimal resultado = valorAtualConta.add(valorFornecido);
-        valorAtualConta = resultado;
-        return valorAtualConta;
+        return resultado;
     }
 }
