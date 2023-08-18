@@ -49,4 +49,20 @@ public class ContasService {
         contasRepository.deleteById(id);
     }
 
+    //métodos Beth
+    //Selecionar conta pelo nome do usuário
+    public Optional<ContasModel> exibeContaPorNome(String nome){
+        return contasRepository.findByNome(nome);
+    }
+
+    //Faça uma alteração específica
+    public ContasModel alterarNome(Long id, ContasModel contasModel){
+        ContasModel contas = exibeContaPorId(id).get();
+
+        if (contasModel.getNomeDoUsuario() != null) {
+            contas.setNomeDoUsuario(contasModel.getNomeDoUsuario());
+        }
+        return contasRepository.save(contas);
+    }
+
 }

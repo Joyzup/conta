@@ -6,6 +6,7 @@ public class CalculoSaque implements CalculoConta{
     @Override
     public BigDecimal calcular(BigDecimal valorAtualConta, BigDecimal valorFornecido){
         BigDecimal resultado = valorAtualConta.subtract(valorFornecido);
-        return resultado;
+        valorAtualConta = resultado;
+        return valorAtualConta;
     }
 }

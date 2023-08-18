@@ -1,5 +1,6 @@
 package com.factory.contabancaria.controller;
 
+import com.factory.contabancaria.dto.ContasDTO;
 import com.factory.contabancaria.model.ContasModel;
 import com.factory.contabancaria.model.factory.ContaFactory;
 import com.factory.contabancaria.repository.ContasRepository;
@@ -57,4 +58,19 @@ public class ContasController {
         contasService.deletarConta(id);
     }
 
+    //Requisições Beth
+    //GET - Seleciona conta pelo nome
+    @GetMapping(path = "/nome/{nome}")
+    public ContasDTO findByNome(@PathVariable String nome){
+        contasRepository.findByNome(nome);
+        ContasModel contasModel = new ContasModel();
+        return contasModel.toDTOReqGet();
+    }
+
+    //PUT - Faça uma alteração específica
+    @PutMapping(path = "/nome/{id}")
+    public ContasDTO alterarNome(@PathVariable Long id, @RequestBody ContasModel contasModel){
+        ContasModel contas = contasService.alterarNome(id, contasModel);
+        return contas.toDTOnome();
+    }
 }
