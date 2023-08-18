@@ -24,6 +24,10 @@ public class ContasService {
         return contasRepository.findById(id);
     }
 
+    public Optional<ContasModel> exibeContaPorNomeDoUsuario(String nomeDoUsuario) {
+        return contasRepository.findByNomeDoUsuarioLikeIgnoreCase(nomeDoUsuario);
+    }
+
     public ContasModel cadastrar(ContasModel contasModel, ContaFactory contaFactory){
         BigDecimal resultado = contaFactory.tipoServicoConta(contasModel.getTipoServico())
                 .calcular(contasModel.getValorAtualConta(), contasModel.getValorFornecido());
