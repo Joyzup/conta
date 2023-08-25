@@ -54,11 +54,11 @@ public class ContasController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Conta não encontrada, tente novamente!");
         }
 
-        ContaPostDto novaContaDto = null;
+        ContaGetDto novaContaDto = null;
 
         if (contaOpcional.isPresent()) {
             ContasModel conta = contaOpcional.get();
-            novaContaDto = contaAssembler.toModelPost(conta);
+            novaContaDto = contaAssembler.toModelGet(conta);
         }
 
         return ResponseEntity.ok(novaContaDto);
@@ -73,14 +73,14 @@ public class ContasController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Conta não encontrada, tente novamente!");
         }
 
-        ContaPostDto novaContaDto = null;
+        ContaGetDto novaContaGet = null;
 
         if (contaModel.getNomeDoUsuario().equals(nome)) {
 
-            novaContaDto = contaAssembler.toModelPost(contaModel);
+            novaContaGet = contaAssembler.toModelGet(contaModel);
         }
 
-        return ResponseEntity.ok(novaContaDto);
+        return ResponseEntity.ok(novaContaGet);
     }
 
     //POST - Cria uma nova conta dentro do banco
