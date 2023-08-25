@@ -152,7 +152,7 @@ public class ContasControllerTest {
         mockMvc.perform(delete("/api/contas/{id}", contaId))
                 .andExpect(status().isOk());
 
-        // Verificar se o método do serviço foi chamado
+        // Verificar se o método do serviço foi chamado uma vez
         verify(contasService, times(1)).deletarConta(contaId);
     }
 
