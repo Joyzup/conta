@@ -20,8 +20,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
@@ -85,7 +85,7 @@ public class ContasControllerTest {
 
         mockMvc.perform(get("/api/contas/{id}", 1L))
                 .andExpect(status().isOk())
-               .andExpect(jsonPath("$.nomeDoUsuario").value(contaGettDto.getNomeDoUsuario()))
+               .andExpect(jsonPath("$.nome_do_usuario").value(contaGettDto.getNomeDoUsuario()))
                .andExpect(jsonPath("$.agencia").value(contaGettDto.getAgencia()));
 
     }
@@ -100,15 +100,13 @@ public class ContasControllerTest {
         contasModel.setAgencia("0000");
         contasModel.setNomeDoUsuario("Jucemeire Marques Lopes");
         ContaGetDto contaGetDto = contaAssembler.toModelGet(contasModel);
-        System.out.println(contaGetDto.getNomeDoUsuario());
-
 
         Mockito.when(contasService.nomeDoUsuario("Jucemeire Marques Lopes"))
                 .thenReturn(contasModel);
 
-        mockMvc.perform(get("/api/contas/buscar-por-nome", "Jucemeire Marques Lopes"))
+        mockMvc.perform(get("/api/contas/buscar-por-nome").param("nome","Jucemeire Marques Lopes"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.nomeDoUsuario").value("Jucemeire Marques Lopes"))
+                .andExpect(jsonPath("$.nome_do_usuario").value(contaGetDto.getNomeDoUsuario()))
                 .andExpect(jsonPath("$.agencia").value(contaGetDto.getAgencia()));
 
     }
@@ -133,8 +131,6 @@ public class ContasControllerTest {
 
         Mockito.when(contasService.cadastrar(contasModel, contaFactory))
                 .thenReturn(contasModel);
-        System.out.println(contaPostDto.getNomeDoUsuario());
-        System.out.println(contasModel.getNomeDoUsuario());
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/contas")
                         .contentType("application/json")
@@ -144,6 +140,20 @@ public class ContasControllerTest {
                 .andExpect(jsonPath("$.tipo_servico").value(contasModel.getTipoServico()))
                 .andExpect(jsonPath("$.valor_atual_conta").value(contasModel.getValorAtualConta()));
 
+    }
+
+    @Test
+    public void deveDeletarConta_QuandoChamarDeletarConta() throws Exception {
+        // Configurar o comportamento do serviço mock
+        Long contaId = 1L;
+        doNothing().when(contasService).deletarConta(contaId);
+
+        // Realizar a requisição para o endpoint
+        mockMvc.perform(delete("/api/contas/{id}", contaId))
+                .andExpect(status().isOk());
+
+        // Verificar se o método do serviço foi chamado
+        verify(contasService, times(1)).deletarConta(contaId);
     }
 
 }

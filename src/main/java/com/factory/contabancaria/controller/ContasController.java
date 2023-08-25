@@ -122,5 +122,21 @@ public class ContasController {
         }
 
     }
+    @PutMapping(path = "/alterar-agencia/{id}")
+    public ResponseEntity<ContasModel> alterarAgencia(@PathVariable Long id,
+                                                         @RequestBody ContasModel contasModel) {
+
+        ContasModel conta = contasService.alterarAgencia(id, contasModel);
+        if (conta == null) {
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+
+        } else {
+
+            return ResponseEntity.ok(conta);
+
+        }
+
+    }
 
     }

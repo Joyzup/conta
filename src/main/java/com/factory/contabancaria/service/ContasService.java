@@ -57,6 +57,16 @@ public class ContasService {
 
     }
 
+    public ContasModel alterarAgencia(Long id, ContasModel contasModel) {
+
+        ContasModel conta = exibeContaPorId(id).get();
+
+        conta.setAgencia(contasModel.getAgencia());
+
+        return contasRepository.save(conta);
+
+    }
+
     public void deletarConta(Long id){
         contasRepository.deleteById(id);
     }
