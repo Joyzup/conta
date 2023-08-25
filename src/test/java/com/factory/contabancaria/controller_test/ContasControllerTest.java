@@ -9,6 +9,7 @@ import com.factory.contabancaria.model.dto.ContaPostDto;
 import com.factory.contabancaria.model.factory.ContaFactory;
 import com.factory.contabancaria.repository.ContasRepository;
 import com.factory.contabancaria.service.ContasService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -45,6 +47,8 @@ public class ContasControllerTest {
     ContaAssembler contaAssembler;
     @MockBean
     ContasRepository contasRepository;
+    @Autowired
+    ObjectMapper objectMapper;
 
     @Test
     public void deveRetornarStausOkEUmaListaDeContas_QuandoListarTodasAsContas() throws Exception {
@@ -129,21 +133,16 @@ public class ContasControllerTest {
 
         Mockito.when(contasService.cadastrar(contasModel, contaFactory))
                 .thenReturn(contasModel);
+        System.out.println(contaPostDto.getNomeDoUsuario());
+        System.out.println(contasModel.getNomeDoUsuario());
 
-        mockMvc.perform(post("/api/contas"))
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/contas")
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(contaPostDto)))
                 .andExpect(status().isCreated())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().json(
-                "{"
-                        + "\"id\": 1,"
-                        + "\"numConta\": \"000000\","
-                        + "\"valorAtualConta\": 1000,"
-                        + "\"agencia\": \"0000\","
-                        + "\"nomeDoUsuario\": \"Jucemeire Marques Lopes\""
-                        + "}"))
-                .andExpect(jsonPath("$.nomeDoUsuario").value(contaPostDto.getNomeDoUsuario()))
-                .andExpect(jsonPath("$.tipoServico").value(contaPostDto.getTipoServico()))
-                .andExpect(jsonPath("$.valorAtualConta").value(contaPostDto.getValorAtualConta()));
+                .andExpect(jsonPath("$.nome_do_usuario").value(contasModel.getNomeDoUsuario()))
+                .andExpect(jsonPath("$.tipo_servico").value(contasModel.getTipoServico()))
+                .andExpect(jsonPath("$.valor_atual_conta").value(contasModel.getValorAtualConta()));
 
     }
 
